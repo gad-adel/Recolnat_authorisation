@@ -1,0 +1,18 @@
+# POUR TEST TYPE H2
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT = FALSE
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+  liquibase:
+    enabled: false
+  banner:
+    location : banner.txt
+application:
+  title: ^project.name^
+  version: ^project.version^
+
+
+

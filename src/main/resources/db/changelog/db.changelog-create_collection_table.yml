@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: init-collection-table
+      author: ZBO
+      changes:
+        - createTable:
+            tableName: collection
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type_collection
+                  type: varchar(24)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: collection_name_fr
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: collection_name_en
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description_fr
+                  type: clob
+                  constraints:
+                    nullable: true
+              - column:
+                  name: institution_id
+                  type: int
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description_en
+                  type: clob
+                  constraints:
+                    nullable: true
+                    
+              - column:
+                  name: data_change_ts
+                  type: timestamp

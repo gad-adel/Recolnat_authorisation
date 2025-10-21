@@ -1,0 +1,8 @@
+variables:
+  PROJECT_CI: authorisation
+  SONAR_TOKEN: sqp_b342a762fea1197d6a72c147574fb9158a830e0f
+
+include:
+  - project: 'recolnat/backend-multirepo/templates'  # Remplacez par le chemin de votre projet template
+    ref: 'main'  # Remplacez par la branche du modèle de CI que vous souhaitez utiliser
+    file: 'ci-template.yaml'

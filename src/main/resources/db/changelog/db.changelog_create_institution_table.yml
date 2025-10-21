@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - changeSet:
+      id: init-institution-table
+      author: YEK
+      changes:
+        - createTable:
+            tableName: institution
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: institution_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: code
+                  type: varchar2 (255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar2 (255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mandatory_description
+                  type: clob
+                  constraints:
+                    nullable: false
+              - column:
+                  name: optional_description
+                  type: clob
+                  constraints:
+                    nullable: true
+              - column:
+                  name: partner_type
+                  type: varchar2 (255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: logo_url
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: modified_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: modified_at
+                  type: timestamp
+                  constraints:
+                    nullable: true
+
+
+  - changeSet:
+      id: addAutoIncrementId
+      author: ZBO
+      changes:
+        -  addAutoIncrement:
+            columnName: id
+            columnDataType: int
+            generationType: BY DEFAULT
+            incrementBy: 1
+            tableName: institution
+
+
+
+
+

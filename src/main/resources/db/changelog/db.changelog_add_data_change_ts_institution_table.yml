@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-data_change_ts-institution-table
+      author: ZBO
+      changes:
+        - addColumn:
+            tableName: institution
+            columns:
+            - column:
+                name: data_change_ts
+                type: timestamp

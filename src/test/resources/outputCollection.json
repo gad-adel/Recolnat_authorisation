@@ -1,0 +1,29 @@
+[
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "typeCollection": "string",
+  "institutionCode": "string",
+  "collectionCode": "string",
+  "collectionNameFr": "string",
+  "collectionNameEn": "string",
+  "collectionName": "string"
+},
+  {
+  "id": "c8ad9d2d-805b-4615-a003-5c4d4fe90885",
+  "typeCollection": "string",
+  "institutionCode": "string",
+  "collectionCode": "string",
+  "collectionNameFr": "string",
+  "collectionNameEn": "string",
+  "collectionName": "string"
+},
+  {
+  "id": "553c40fe-781b-437e-87c2-4984ee9f8f4f",
+  "typeCollection": "string",
+  "institutionCode": "string",
+  "collectionCode": "string",
+  "collectionNameFr": "string",
+  "collectionNameEn": "string",
+  "collectionName": "string"
+}
+]

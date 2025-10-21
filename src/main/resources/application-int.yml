@@ -1,0 +1,38 @@
+#POUR LES ENVIRONNEMENTS DE TEST CONTAINER
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16.0-bullseye:///rcn      # charge un testcontainer postgres
+    hikari:
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+      jdbc-url: jdbc:tc:postgresql:16.0-bullseye:///rcn      # charge un testcontainer postgres
+      username: authdb
+      password: authdb
+
+  jpa:
+    open-in-view: false
+    generate-ddl: false
+    show-sql: true
+  liquibase:
+    enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: ${AUTH_SERVER_INTRO:http://localhost:8089/auth/realms/recolnat-oauth2/protocol/openid-connect/token/introspect}
+          client-id: ${CLIENT_ID:authorisation-oidc}
+          client-secret: ${CLIENT_SECRET:hHSlNG8l8MhuzVgS4mcptrLNasRI4WJg}
+
+auth:
+  server-url: ${AUTH_SERVER_ADMIN:http://localhost:8089/auth}
+  realm: master
+  username: ${AUTH_ADMIN:admin}
+  password: ${AUTH_ADMIN_PASSWORD:admin}
+  clientId: ${AUTH_ADMIN_CLIENT_ID::admin-cli}
+  app-realm: ${APP_REALM:recolnat-oauth2}
+  auth-server-url-OpenApi: ${AUTH_SERVER:http://localhost:8089/auth/realms/recolnat-oauth2}
+
+application:
+  title: ^project.name^
+  version: ^project.version^
+
+

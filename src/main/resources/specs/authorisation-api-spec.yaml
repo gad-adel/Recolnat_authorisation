@@ -1,0 +1,489 @@
+openapi: 3.0.3
+info:
+  title: Recolnat Authorisation
+  description: |-
+    Authorisation API. Le réseau national des collections naturalistes 
+    est une infrastructure de recherche française dont l'objectif est 
+    de produire un corpus de données basé sur les collections d'histoire naturelle de France, 
+    permettant de valoriser les recherches au service de l'étude de la géo- et de la biodiversité actuelle et passée.
+    Liens utiles:
+    - [RECOLNAT](https://fr.wikipedia.org/wiki/RECOLNAT)
+  version: "1.0"
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@mnhn.fr
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+externalDocs:
+  description: Find out more about RECOLNAT
+  url: https://fr.wikipedia.org/wiki/RECOLNAT
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: Recolnat Authorisation management
+    description: Recolnat Authorisation management
+security:
+  - authorisation-oidc: [ ] # <--- Use the same name as specified in securitySchemes*, here without scope
+paths:
+  /v1/users/unassigned:
+    get:
+      operationId: getUnassignedUsers
+      tags:
+        - Retrieve all users
+      summary: Retrieve unassigned users
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UnassignedUser'
+        '401':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '409':
+          description: Applicative Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        '500':
+          description: error server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+  /v1/users/{uid}:
+    get:
+      operationId: getUserById
+      tags:
+        - Retrieve all users
+      summary: Retrieve user by id
+      parameters:
+        - name: uid
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+            description: user identifier
+          example:
+            id: 82e20227-b0d7-46b4-b44d-2257d86f67b1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '409':
+          description: Applicative Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        '500':
+          description: error server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+  /v1/roles:
+    get:
+      operationId: getRoles
+      tags:
+        - Retrieve all roles
+      summary: Retrieve roles
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleResponse'
+        '401':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '409':
+          description: Applicative Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        '500':
+          description: error server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+  /v1/users/{uid}/permissions:
+    delete:
+      operationId: removePermission
+      tags:
+        - Handle user permissions
+      summary: Remove permission to user
+      parameters:
+        - name: uid
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+            description: user identifier
+            example:
+              id: 386ff0b0-a6cc-11ec-b909-0242ac120002
+      responses:
+        '200':
+          description: Successful operation
+          headers:
+            userId:
+              description: User identifier
+              required: true
+              schema:
+                type: string
+        '401':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '409':
+          description: Applicative Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        '500':
+          description: error server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+    put:
+      operationId: addPermission
+      tags:
+        - Handle user permissions
+      summary: Add permission to user
+      parameters:
+        - name: uid
+          required: true
+          in: path
+          schema:
+            type: string
+            format: uuid
+            description: user identifier
+            example:
+              id: 386ff0b0-a6cc-11ec-b909-0242ac120002
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PermissionRequest"
+      responses:
+        '200':
+          description: Successful operation
+          headers:
+            userId:
+              description: User identifier
+              required: true
+              schema:
+                type: string
+        '401':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '409':
+          description: Applicative Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        '500':
+          description: error server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedError'
+components:
+  securitySchemes:
+    authorisation-oidc: # <--- Arbitrary name for the security scheme. Used to refer to it from elsewhere.
+      type: oauth2
+      description: This API uses OAuth 2 with the implicit grant flow. For more information, see https://developers.getbase.com/docs/rest/articles/oauth2/requests
+      flows:
+        implicit:
+          authorizationUrl: http://sample.com/realms/recolnat-oauth2/authorize
+          scopes:
+            email: email info
+            profile: user profile
+            roles: user roles
+            web-origin: cors web
+  schemas:
+    User:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+          description: identifiant de l utilisateur
+          example: 712215d4-c795-11ec-9d64-0242ac120002
+        email:
+          type: string
+          description: email de l utilisateur
+          example: harryPotter@recolnat.com
+        firstName:
+          type: string
+          description: prénom de l utilisateur
+          example: harry
+        lastName:
+          type: string
+          description: nom de l utilisateur
+          example: Potter
+        username:
+          type: string
+          description: nom usuel de l utilisateur
+          example: harryPotter
+        role:
+          $ref: '#/components/schemas/Role'
+        institution:
+          $ref: "#/components/schemas/Institution"
+        collections:
+          type: array
+          items:
+            type: string
+            format: string
+    Institution:
+      type: object
+      properties:
+        id:
+          type: string
+          format: integer
+          description: identifiant de l institution
+          example: 12
+        institutionId:
+          type: string
+          format: uuid
+          description: id sous forme UUID de l institution
+          example: 50f4978a-da62-4fde-8f38-5003bd43ff64
+        code:
+          type: string
+          format: string
+          description: code de l institution
+          example: MNHN
+        name:
+          type: string
+          format: string
+          description: nom de l institution
+          example: Muséum National d'Histoire Naturelle
+        assignable:
+          type: boolean
+          nullable: false
+          description: institution assignable
+          example: false
+        mandatoryDescription:
+          type: string
+          format: string
+          description: description obligatoire de l institution
+          example: institution parisienne
+        optionalDescription:
+          type: string
+          format: string
+          description: description optionnel de l institution
+          example: institution principale
+        partnerType:
+          type: string
+          format: string
+          description: type de partenariat DATA_PROVIDER,PARTNER,MEMBER
+          example: PARTNER
+        logoUrl:
+          type: string
+          format: string
+          description: url du logo d institution
+          example: http://mediaphoto.mnhn.fr/media/1441439763721S1JxP92vYMmLFcfK
+    UnassignedUser:
+      type: object
+      properties:
+        uid:
+          type: string
+          format: uuid
+          description: identifiant de l utilisateur
+          example: 712215d4-c795-11ec-9d64-0242ac120002
+        email:
+          type: string
+          description: email de l utilisateur
+          example: harryPotter@recolnat.com
+        firstName:
+          type: string
+          description: prénom de l utilisateur
+          example: Harry
+        lastName:
+          type: string
+          description: nom de l utilisateur
+          example: Potter
+    RoleResponse:
+      description: Role Response
+      type: object
+      nullable: false
+      properties:
+        id:
+          type: string
+          description: id du role
+          example: 2
+        name:
+          type: string
+          nullable: false
+          description: role user ADMIN,USER_INFRA,ADMIN_INSTITUTION,ADMIN_COLLECTION,DATA_ENTRY, USER
+          example: ADMIN_INSTITUTION
+        description:
+          type: string
+          nullable: false
+          description: libelle du role
+          example: Responsable d'institution
+        assignable:
+          type: boolean
+          nullable: false
+          description: role assignable
+          example: false
+      example:
+        id: 1
+        name: ADMIN_COLLECTION
+        description: administrateur de collection
+        assignable: true
+    Role:
+      description: Role Response
+      type: object
+      nullable: false
+      properties:
+        id:
+          type: string
+          description: id du role
+          example: e024b986-d81e-47f8-a328-812357233f5d
+        name:
+          type: string
+          nullable: false
+          description: nom du role
+          example: ADMIN_INSTITUTION
+        description:
+          type: string
+          nullable: false
+          description: description du role
+          example: Responsable d'institution
+      example:
+        id: e024b986-d81e-47f8-a328-812357233f5d
+        name: DATA_ENTRY
+        description: Opérateur de saisie
+    PermissionRequest:
+      type: object
+      required:
+        - roleId
+      properties:
+        roleId:
+          type: string
+          format: uuid
+          description: id du role
+          example: e024b986-d81e-47f8-a328-812357233f5d
+        institutionId:
+          type: string
+          format: uuid
+          description: id de l'institution
+          example: e024b986-d81e-47f8-a328-812357233f5d
+        collections:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: liste des uuid des collection associé a l utilisateur
+            example: [ e024b986-d81e-47f8-a328-812345633f5d,e024b986-d81e-47f8-a328-123456233f5d ]
+      example:
+        roleId: e024b986-d81e-47f8-a328-812357233f5d
+        institutionId: 12
+        collections: [ e024b986-d81e-47f8-a328-812345633f5d,e024b986-d81e-47f8-a328-123456233f5d ]
+    NoContent:
+      $ref: '#/components/schemas/Error'
+    UnexpectedError:
+      $ref: '#/components/schemas/Error'
+    Forbidden:
+      $ref: '#/components/schemas/Error'
+    Unauthorized:
+      $ref: '#/components/schemas/Error'
+    Conflict:
+      $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      description: A common error response
+      properties:
+        errorCode:
+          type: integer
+          description: Error Code
+        errorMessage:
+          type: string
+          description: Message
+        errorLevel:
+          type: string
+          description: Level of error
+          default: info
+          enum:
+            - info
+            - warning
+            - error
+            - critical
+        errorType:
+          type: string
+          description: Type of error
+          enum:
+            - functional
+            - technical
+        documentationUrl:
+          type: string
+          description: Url of the documenation
+        tips:
+          type: string
+          description: Tips/help for adressing the error

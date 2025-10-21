@@ -1,0 +1,108 @@
+logging:
+  level:
+    root: ${ROOT_LOG_LEVEL:ERROR}
+    org:
+      hibernate:
+        type: ${AUTHORISATION_LOG_LEVEL:ERROR}
+        SQL: ${AUTHORISATION_LOG_LEVEL:ERROR}
+        orm.jdbc.bind: ${AUTHORISATION_LOG_LEVEL:ERROR}
+        type.descriptor.sql: ${AUTHORISATION_LOG_LEVEL:ERROR}
+      springframework:
+        security: ${AUTHORISATION_LOG_LEVEL:ERROR}
+        web: ${AUTHORISATION_LOG_LEVEL:ERROR}
+    recolnat:
+      org:
+        authorisation: ${AUTHORISATION_LOG_LEVEL:ERROR}
+
+server:
+  port: 8081
+spring:
+  application:
+    name: authorisation
+  datasource:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USR:collections_owner_user}
+    password: ${DATABASE_PWD:R4lOZzzmxrlM8I4sDCxhDOXXRt9L2Wxbu9KoTYIxHuWlbUyuL2E476Nw5jaLHrF1}
+    url: ${DATABASE_URL:jdbc:postgresql://192.168.130.5:5432/collections?currentSchema=collections}
+  jpa:
+    database: postgresql
+    open-in-view: false
+    generate-ddl: false
+    properties:
+      hibernate.format_sql: true
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: ${AUTH_SERVER_INTRO:http://localhost:8089/auth/realms/recolnat-oauth2/protocol/openid-connect/token/introspect}
+          client-id: ${CLIENT_ID:authorisation-oidc}
+          client-secret: ${CLIENT_SECRET:eaCcFXA78r1eYmmDnZPh8jv42e7wwabU}
+  banner:
+    location: banner.txt
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  servlet:
+    multipart:
+      max-file-size: -1
+      resolve-lazily: true
+      max-request-size: -1
+  liquibase:
+    contexts: ${INIT_DATA_CTX:test}
+    enabled: ${LIQUIBASE_ACTIVE:false}
+    default-schema: ${DEFAULT_SCHEMA:public}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      cors:
+        allow-credentials: false
+        allowed-headers: true
+        allowed-methods: "*"
+        exposed-headers: "*"
+        allowed-origins: "*"
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    enabled: false
+    sampling.probability: 1.0
+auth:
+  server-url: ${AUTH_SERVER_ADMIN:http://localhost:8089/auth}
+  realm: master
+  username: ${AUTH_ADMIN:admin}
+  password: ${AUTH_ADMIN_PASSWORD:admin}
+  clientId: ${AUTH_ADMIN_CLIENT_ID::admin-cli}
+  app-realm: ${APP_REALM:recolnat-oauth2}
+  auth-server-url-OpenApi: ${AUTH_SERVER:http://localhost:8089/auth/realms/recolnat-oauth2}
+
+collections:
+  api:
+    base_url: ${COLLECTIONS_URL:#{'http://localhost:8080'}}
+  connect:
+    timeout: ${COLLECTIONS_TIMEOUT:500}
+
+springdoc:
+  show-actuator: true
+  show-oauth2-endpoints: true
+  swagger-ui:
+    csrf.enabled: false
+    oauth:
+      appName: ^project.name^
+      clientId: ${AUTH_CLIENT_ID:recolnat-oidc}
+      clientSecret: ${CLIENT_SECRET:eaCcFXA78r1eYmmDnZPh8jv42e7wwabU}
+
+
+application:
+  title: ^project.name^
+  version: ^project.version^

@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+    postgres:
+     image: postgres:16-alpine
+     container_name: postgres_authorize
+     hostname: postgres
+     environment:
+        POSTGRES_USER: datawh
+        POSTGRES_PASSWORD: datawh
+        POSTGRES_DATABASE: datawh
+     restart: always
+     volumes:
+        - type: bind
+          source: ./src/test/resources/postgres/init_postgres_instance.sql
+          target: /docker-entrypoint-initdb.d/init_postgres_instance.sql 
+          read_only: true
+     command:
+        - "postgres"
+        - "-c"
+        - "max_connections=300"
+        - "-c"
+        - "shared_buffers=3GB"
+        - "-c"
+        - "superuser_reserved_connections=200"
+     ports:
+      - "5432:5432"
+      #pg_isready verifie le statut de connexion d un serveur postgres
+      # -q quiet , pas de statut du message
+      #-d database keycloak
+     healthcheck:
+       test: [ "CMD", "pg_isready", "-q", "-d", "keycloak", "-U","datawh"]
+       timeout: 20s
+       interval: 20s
+       retries: 10
+     networks:
+       - authorize
+
+    keycloak:
+      container_name: keycloak_authorize
+      image: quay.io/keycloak/keycloak:23.0.1
+      #build:
+        #context: ./keycloak
+      command: ['start-dev','--import-realm']  # -V start --import-realm
+      depends_on:
+        postgres:
+          condition: service_healthy
+      volumes:
+        - type: bind
+          source: ./src/test/resources/keycloak/recolnat-oauth2-realm.json
+          target: /opt/keycloak/data/import/recolnat-oauth2-realm.json
+          bind:
+            create_host_path: true
+        - type: bind
+          source: ./src/test/resources/keycloak/keycloak-recolnat-login-theme.jar
+          target: /opt/keycloak/providers/keycloak-recolnat-login-theme.jar
+          read_only: true
+      environment:
+        KC_DB: postgres
+       # KEYCLOAK_IMPORT: /opt/test/recolnat-oauth2-realm.json -Dkeycloak.profile.feature.upload_scripts=enabled
+       #JAVA_OPTS_APPEND: -Dkeycloak.import=keycloak/data/recolnat-oauth2-realm.json
+        KC_DB_URL_DATABASE: keycloak
+        KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+        KC_DB_USERNAME: adminkc
+        KC_DB_PASSWORD: adminkc
+        KC_HEALTH_ENABLED: true
+        KC_HTTP_ENABLED: true
+        KC_METRICS_ENABLED: true
+        KC_LOG_LEVEL: WARN
+        KC_HTTP_RELATIVE_PATH: auth
+        # KC_HOSTNAME: keycloak
+        # KC_HOSTNAME_PORT: 8180
+        #KC_HOSTNAME_URL: http://keycloak.com.au:8180
+        #KC_PROXY: reencrypt
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: admin
+        IMP_AUTHORISATION_OPENAPI: http://localhost:8081/*
+        IMP_COLLMANAGER_OPENAPI: http://localhost:8080/*
+        IMP_EXPLORER_OPENAPI: http://localhost:8082/*
+        IMP_FRONT: http://localhost:3000/*
+        SECRET_EXPLORER: CZMdx8W8Fq2MdcPZbHD8wST7blSWYpgp
+        SECRET_COLLECTION_MANAGER: ee5jLU9Z27S1SNyusPI5o8ODmcjJ0Mw5
+        SECRET_AUTHORIZATION: eaCcFXA78r1eYmmDnZPh8jv42e7wwabU
+      ports:
+        - "8089:8080"
+        - "9990:9990" # debug port
+      networks:
+        - authorize
+
+
+networks:
+    authorize:
+        driver: bridge
+
+        
+volumes:
+  authodata1:
+    driver: local
