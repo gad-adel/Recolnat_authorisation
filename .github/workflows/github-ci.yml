@@ -15,11 +15,12 @@ jobs:
     uses: gad-adel/Recolnat-Template/.github/workflows/github-ci-template.yml@main
     with:
       project_ci: authorisation
-    # secrets:
+    secrets:
+      HARBOR_REGISTRY_PASSWORD: ${{ secrets.HARBOR_REGISTRY_PASSWORD }}
       # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       # NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
       # NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
       # HARBOR_REGISTRY_USER: ${{secrets.HARBOR_REGISTRY_USER }}
-      # HARBOR_REGISTRY_PASSWORD: ${{ secrets.HARBOR_REGISTRY_PASSWORD }}
+      
     permissions:
       contents: read
