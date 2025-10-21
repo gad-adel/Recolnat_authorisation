@@ -257,31 +257,31 @@
           <skip>true</skip>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>jib-maven-plugin</artifactId>
-        <version>3.4.3</version>
-        <executions>
-          <execution>
-            <phase>deploy</phase>
-            <goals>
-              <goal>build</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <from>
-            <image>eclipse-temurin:17-jre</image>
-          </from>
-          <to>
-            <image>docker.mnhn.fr/recolnat/${project.artifactId}:${project.version}</image>
-            <tags>
-              <tag>latest</tag>
-              <tag>${project.version}</tag>
-            </tags>
-          </to>
-        </configuration>
-      </plugin>
+      <!-- <plugin> -->
+        <!-- <groupId>com.google.cloud.tools</groupId> -->
+        <!-- <artifactId>jib-maven-plugin</artifactId> -->
+        <!-- <version>3.4.3</version> -->
+        <!-- <executions> -->
+          <!-- <execution> -->
+            <!-- <phase>deploy</phase> -->
+            <!-- <goals> -->
+              <!-- <goal>build</goal> -->
+            <!-- </goals> -->
+          <!-- </execution> -->
+        <!-- </executions> -->
+        <!-- <configuration> -->
+          <!-- <from> -->
+            <!-- <image>eclipse-temurin:17-jre</image> -->
+          <!-- </from> -->
+          <!-- <to> -->
+            <!-- <image>docker.mnhn.fr/recolnat/${project.artifactId}:${project.version}</image> -->
+            <!-- <tags> -->
+              <!-- <tag>latest</tag> -->
+              <!-- <tag>${project.version}</tag> -->
+            <!-- </tags> -->
+          <!-- </to> -->
+        <!-- </configuration> -->
+      <!-- </plugin> -->
       <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
