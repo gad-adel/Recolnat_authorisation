@@ -1,6 +1,7 @@
 package recolnat.org.authorisation.service;
 
 import io.recolnat.model.UnassignedUserDTO;
+import jakarta.validation.Valid;
 import recolnat.org.authorisation.api.domain.UserProfile;
 import recolnat.org.authorisation.api.domain.UserProfilePage;
 
@@ -16,9 +17,11 @@ public interface UserService {
      * @param size          taille de la page
      * @param searchTerm    terme à rechercher dans le nom de l'utilisateur
      * @param institutionId identifiant de l'institution recherchée
+     * @param columnSort    colonne de tri
+     * @param typeSort      ordre de tri
      * @return une liste d'utilisateurs paginée
      */
-    UserProfilePage findAll(int page, int size, String searchTerm, UUID institutionId);
+    UserProfilePage findAll(int page, int size, String searchTerm, UUID institutionId, @Valid String columnSort, @Valid String typeSort);
 
     /**
      * Retourne l'utilisateur connecté

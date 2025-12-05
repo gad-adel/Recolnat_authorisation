@@ -1,6 +1,5 @@
 package recolnat.org.authorisation.user.api.domain.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-
 @ActiveProfiles("int")
-@Slf4j
 class UserServiceImplTest extends AbstractServiceTest {
     @Autowired
     UserService userService;
@@ -34,7 +31,6 @@ class UserServiceImplTest extends AbstractServiceTest {
     void getUserByUid() {
         var expectedUserId = UUID.fromString("82e20227-b0d7-46b4-b44d-2257d86f67b1");
         var user = userService.getUserByUid(expectedUserId);
-        log.info("User found : {}", user);
         assertThat(user).isNotNull();
         assertThat(user.getUid()).isEqualTo(expectedUserId);
     }
@@ -45,9 +41,8 @@ class UserServiceImplTest extends AbstractServiceTest {
         int size = 10;
         when(authenticationService.getConnected()).thenReturn(ConnectedUser.builder()
                 .userId(UUID.fromString(RESP_INST1_UID)).build());
-        var userProfilePage = userService.findAll(page, size, "", null);
+        var userProfilePage = userService.findAll(page, size, "", null, "name", "asc");
         assertThat(userProfilePage.getUsers()).hasSizeLessThanOrEqualTo(4);
         assertThat(userProfilePage.getTotalPages()).isLessThanOrEqualTo(4);
-
     }
 }

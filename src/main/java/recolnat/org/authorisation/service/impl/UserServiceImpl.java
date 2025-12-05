@@ -2,6 +2,7 @@ package recolnat.org.authorisation.service.impl;
 
 import com.google.common.collect.Lists;
 import io.recolnat.model.UnassignedUserDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import recolnat.org.authorisation.service.AuthenticationService;
 import recolnat.org.authorisation.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,6 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.lang.String.valueOf;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -54,6 +57,8 @@ public class UserServiceImpl implements UserService {
      */
     public static final String COLLECTIONS_KEY = "collections";
     public static final String AUTH_TECH_1 = "AUTH_TECH_1";
+    public static final String SORT_FIELD_INSTITUTION = "institution";
+    public static final String SORT_FIELD_ROLE = "role";
 
 
     private final InstitutionRepositoryJPA institutionRepository;
@@ -92,7 +97,7 @@ public class UserServiceImpl implements UserService {
      * @param uid
      */
     public static void handleException(Exception e, String uid) {
-        if (StringUtils.contains(e.getMessage(), String.valueOf(HttpStatus.NOT_FOUND.value()))) {
+        if (StringUtils.contains(e.getMessage(), valueOf(HttpStatus.NOT_FOUND.value()))) {
             var techEx =
                     new AuthorisationTechnicalException(
                             "AUTH_FUNC_NFE",
@@ -176,7 +181,7 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public UserProfilePage findAll(int page, int size, String searchTerm, UUID institutionId) {
+    public UserProfilePage findAll(int page, int size, String searchTerm, UUID institutionId, @Valid String columnSort, @Valid String typeSort) {
         List<UserRepresentation> userRepresentations;
         var currentUser = getCurrentUser();
 
@@ -194,11 +199,14 @@ public class UserServiceImpl implements UserService {
             return UserProfilePage.builder().users(new ArrayList<>()).totalPages(0).build();
         }
 
+        Comparator<UserProfile> comparator = getComparator(columnSort, typeSort);
+
         var users = userRepresentations
                 .stream()
                 .filter(user -> user.isEnabled() && user.isEmailVerified())
                 .map(this::buildUserProfile)
-                .sorted(comparing(u -> u != null ? u.getLastName() + " " + u.getFirstName() : null, String.CASE_INSENSITIVE_ORDER))
+                .filter(Objects::nonNull)
+                .sorted(comparator)
                 .toList();
 
         if (StringUtils.isNotBlank(searchTerm)) {
@@ -215,12 +223,34 @@ public class UserServiceImpl implements UserService {
 
         var allPages = Lists.partition(users, size);
         if (page >= allPages.size()) {
-            log.warn("ERR_NFE_CODE", "Page: " + page + " cannot be requested because no user with roles cannot be found ");
+            log.warn("ERR_NFE_CODE : {}", "Page: " + page + " cannot be requested because no user with roles cannot be found ");
             return UserProfilePage.builder().users(new ArrayList<>()).totalPages(0).build();
         }
         var userOfPage = allPages.get(page);
 
         return UserProfilePage.builder().users(userOfPage).totalPages(allPages.size()).numberOfElements(users.size()).build();
+    }
+
+    private String getSortField(UserProfile u, String column) {
+        if (column == null) {
+            return u.getLastName() + " " + u.getFirstName();
+        }
+        return switch (column) {
+            case SORT_FIELD_INSTITUTION -> u.getInstitution() != null ? u.getInstitution().getName() : StringUtils.EMPTY;
+            case SORT_FIELD_ROLE -> u.getRole() != null ? u.getRole().getName() : StringUtils.EMPTY;
+            default -> u.getLastName() + " " + u.getFirstName();
+        };
+    }
+
+    private Comparator<UserProfile> getComparator(String columnSort, String typeSort) {
+        String column = StringUtils.isNotBlank(columnSort) ? columnSort.toLowerCase(Locale.ROOT) : null;
+        Comparator<UserProfile> comparator = Comparator.comparing(u -> getSortField(u, column), String.CASE_INSENSITIVE_ORDER);
+
+        if ("desc".equalsIgnoreCase(typeSort)) {
+            comparator = comparator.reversed();
+        }
+
+        return comparator;
     }
 
     /**
@@ -233,7 +263,6 @@ public class UserServiceImpl implements UserService {
      */
     private UserProfile buildUserProfile(UserRepresentation userRepresentation) {
         if (nonNull(userRepresentation)) {
-
             try {
                 return UserProfile.builder()
                         .uid(UUID.fromString(userRepresentation.getId()))

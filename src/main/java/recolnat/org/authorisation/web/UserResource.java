@@ -53,9 +53,11 @@ public class UserResource implements RetrieveAllUsersApi {
             @NotNull @Min(0) @Parameter(name = "page", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "page") Integer page,
             @NotNull @Parameter(name = "size", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "size") Integer size,
             @Parameter(name = "q", description = "Nom recherché", in = ParameterIn.QUERY) @Valid @RequestParam(value = "q", required = false) String searchTerm,
+            @Parameter(name = "columnSort", description = "Champ de tri", in = ParameterIn.QUERY) @Valid @RequestParam(value = "columnSort", required = false) String columnSort,
+            @Parameter(name = "typeSort", description = "Ordre de tri", in = ParameterIn.QUERY) @Valid @RequestParam(value = "typeSort", required = false) String typeSort,
             @Parameter(name = "institution_id", description = "Institution recherchée", in = ParameterIn.QUERY)
             @Valid @RequestParam(value = "institution_id", required = false) UUID institutionId) {
-        final var userProfilePage = userService.findAll(page, size, searchTerm, institutionId);
+        final var userProfilePage = userService.findAll(page, size, searchTerm, institutionId, columnSort, typeSort);
         return new ResponseEntity<>(userMapper.toAdminResponseDTO(userProfilePage), OK);
     }
 
